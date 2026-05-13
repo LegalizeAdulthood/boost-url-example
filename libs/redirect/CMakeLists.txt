@@ -1,5 +1,4 @@
 add_library(redirect
-    include/redirect/redirect.h
     include/redirect/Rewrite.h
     include/redirect/UrlMapper.h
     Rewrite.cpp

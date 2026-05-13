@@ -29,34 +29,28 @@ Rewrite::Rewrite(const std::string &original_url)
 
 Rewrite &Rewrite::set_scheme(const std::string &scheme)
 {
-    if (scheme.empty())
+    if (!scheme.empty())
     {
-        return *this;
+        m_url.set_scheme(scheme);
     }
-
-    m_url.set_scheme(scheme);
     return *this;
 }
 
 Rewrite &Rewrite::set_host(const std::string &host)
 {
-    if (host.empty())
+    if (!host.empty())
     {
-        return *this;
+        m_url.set_host(host);
     }
-
-    m_url.set_host(host);
     return *this;
 }
 
 Rewrite &Rewrite::set_port(const std::string &port)
 {
-    if (port.empty())
+    if (!port.empty())
     {
-        return *this;
+        m_url.set_port(port);
     }
-
-    m_url.set_port(port);
     return *this;
 }
 
@@ -73,12 +67,10 @@ Rewrite &Rewrite::set_path(const std::string &path)
 
 Rewrite &Rewrite::set_query_param(const std::string &key, const std::string &value)
 {
-    if (key.empty() || value.empty())
+    if (!key.empty() && !value.empty())
     {
-        return *this;
+        m_url.params().set(key, value);
     }
-
-    m_url.params().set(key, value);
     return *this;
 }
 
@@ -92,7 +84,8 @@ Rewrite &Rewrite::remove_query_param(const std::string &key)
     auto params = m_url.params();
     for (auto iter = params.begin(); iter != params.end();)
     {
-        if (to_string_view((*iter).key) == key)
+        // ReSharper disable once CppRedundantDereferencingAndTakingAddress
+        if ((*iter).key == key)
         {
             iter = params.erase(iter);
         }
@@ -123,12 +116,10 @@ Rewrite &Rewrite::remove_query(bool remove)
 
 Rewrite &Rewrite::set_fragment(const std::string &fragment)
 {
-    if (fragment.empty())
+    if (!fragment.empty())
     {
-        return *this;
+        m_url.set_fragment(fragment);
     }
-
-    m_url.set_fragment(fragment);
     return *this;
 }
 

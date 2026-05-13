@@ -1,7 +1,9 @@
 add_library(redirect
     include/redirect/redirect.h
     include/redirect/Rewrite.h
+    include/redirect/UrlMapper.h
     Rewrite.cpp
+    UrlMapper.cpp
 )
 find_package(Boost REQUIRED COMPONENTS url)
 target_include_directories(redirect PUBLIC include)

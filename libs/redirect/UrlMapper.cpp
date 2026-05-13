@@ -17,7 +17,7 @@ bool path_matches(const std::string &path, const std::string &prefix)
         return false;
     }
 
-    if (path.compare(0, prefix.size(), prefix) != 0)
+    if (path.substr(0, prefix.size()) != prefix)
     {
         return false;
     }

@@ -102,7 +102,7 @@ boost::urls::url map_url(const Options &opts)
     return mapper(opts.incoming_url);
 }
 
-}
+} // namespace
 
 int main(int argc, char *argv[])
 {

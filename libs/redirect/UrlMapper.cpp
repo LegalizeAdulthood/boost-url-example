@@ -50,13 +50,13 @@ std::string join_paths(const std::string &base_path, const std::string &suffix)
     return base_path + suffix;
 }
 
-}
+} // namespace
 
 namespace redirect
 {
 
-MappingRule::MappingRule(const std::string &path_prefix, const std::string &target_base_url)
-    : m_path_prefix(path_prefix)
+MappingRule::MappingRule(const std::string &path_prefix, const std::string &target_base_url) :
+    m_path_prefix(path_prefix)
 {
     if (m_path_prefix.empty())
     {
@@ -141,4 +141,4 @@ boost::urls::url UrlMapper::operator()(const std::string &incoming_url) const
     return mapped;
 }
 
-}
+} // namespace redirect

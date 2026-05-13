@@ -11,7 +11,7 @@ std::string to_string_view(const StringView &value)
     return std::string(value.data(), value.size());
 }
 
-}
+} // namespace
 
 namespace redirect
 {
@@ -153,4 +153,4 @@ boost::urls::url Rewrite::operator()() const
     return m_url;
 }
 
-}
+} // namespace redirect

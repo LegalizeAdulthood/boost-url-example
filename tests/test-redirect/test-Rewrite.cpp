@@ -92,13 +92,13 @@ TEST(TestRewrite, empty_strings_do_nothing)
     redirect::Rewrite rewrite("https://example.com:8443/search?q=boost%20url&page=2#results");
 
     boost::urls::url url = rewrite.set_scheme("")
-        .set_host("")
-        .set_port("")
-        .set_path("")
-        .set_query_param("", "3")
-        .set_query_param("page", "")
-        .remove_query_param("")
-        .set_fragment("")();
+                               .set_host("")
+                               .set_port("")
+                               .set_path("")
+                               .set_query_param("", "3")
+                               .set_query_param("page", "")
+                               .remove_query_param("")
+                               .set_fragment("")();
 
     ASSERT_EQ(url.buffer(), "https://example.com:8443/search?q=boost%20url&page=2#results");
 }
@@ -115,12 +115,12 @@ TEST(TestRewrite, chains_range_and_conditional_methods)
     const std::vector<std::string> remove_param{"q"};
 
     boost::urls::url url = redirect::Rewrite("https://example.com/search?q=boost%20url&page=2#results")
-        .set_host("api.example.com")
-        .set_path("/v1/search")
-        .remove_query(false)
-        .remove_query_params(remove_param)
-        .set_query_params(set_query)
-        .remove_fragment(true)();
+                               .set_host("api.example.com")
+                               .set_path("/v1/search")
+                               .remove_query(false)
+                               .remove_query_params(remove_param)
+                               .set_query_params(set_query)
+                               .remove_fragment(true)();
 
     ASSERT_EQ(url.buffer(), "https://api.example.com/v1/search?page=3");
 }

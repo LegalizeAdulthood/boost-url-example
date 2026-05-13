@@ -52,4 +52,4 @@ private:
     boost::urls::url m_url;
 };
 
-}
+} // namespace redirect

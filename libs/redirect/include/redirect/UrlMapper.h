@@ -32,4 +32,4 @@ private:
     std::vector<MappingRule> m_rules;
 };
 
-}
+} // namespace redirect

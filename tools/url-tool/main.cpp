@@ -1,4 +1,5 @@
 #include <boost/url.hpp>
+#include <redirect/Rewrite.h>
 
 #include <cstdint>
 #include <exception>
@@ -8,6 +9,9 @@
 #include <vector>
 
 namespace urls = boost::urls;
+
+namespace
+{
 
 struct QueryChange
 {
@@ -173,67 +177,18 @@ bool has_rewrites(const Options &opts)
         !opts.remove_param.empty();
 }
 
-void remove_query_param(urls::url &url, const std::string &key)
+urls::url rewrite_url(const Options &opts)
 {
-    auto params = url.params();
-    for (auto iter = params.begin(); iter != params.end();)
-    {
-        if (to_string_view((*iter).key) == key)
-        {
-            iter = params.erase(iter);
-        }
-        else
-        {
-            ++iter;
-        }
-    }
-}
-
-void apply_rewrites(urls::url &url, const Options &opts)
-{
-    if (!opts.scheme.empty())
-    {
-        url.set_scheme(opts.scheme);
-    }
-
-    if (!opts.host.empty())
-    {
-        url.set_host(opts.host);
-    }
-
-    if (!opts.port.empty())
-    {
-        url.set_port(opts.port);
-    }
-
-    if (!opts.path.empty())
-    {
-        url.set_path(opts.path);
-    }
-
-    if (opts.remove_query)
-    {
-        url.remove_query();
-    }
-
-    for (const auto &key : opts.remove_param)
-    {
-        remove_query_param(url, key);
-    }
-
-    for (const auto &change : opts.set_query)
-    {
-        url.params().set(change.key, change.value);
-    }
-
-    if (opts.remove_fragment)
-    {
-        url.remove_fragment();
-    }
-    else if (!opts.fragment.empty())
-    {
-        url.set_fragment(opts.fragment);
-    }
+    return redirect::Rewrite(opts.input)
+        .set_scheme(opts.scheme)
+        .set_host(opts.host)
+        .set_port(opts.port)
+        .set_path(opts.path)
+        .remove_query(opts.remove_query)
+        .remove_query_params(opts.remove_param)
+        .set_query_params(opts.set_query)
+        .set_fragment(opts.fragment)
+        .remove_fragment(opts.remove_fragment)();
 }
 
 void print_url(const urls::url_view_base &url)
@@ -273,6 +228,8 @@ void print_url(const urls::url_view_base &url)
     std::cout << "fragment: " << (url.has_fragment() ? to_string_view(url.fragment()) : "") << "\n";
 }
 
+} // namespace
+
 int main(int argc, char *argv[])
 {
     try
@@ -290,20 +247,13 @@ int main(int argc, char *argv[])
             return 1;
         }
 
-        auto parsed = urls::parse_uri_reference(opts.input);
-        if (!parsed)
-        {
-            std::cerr << "invalid URL: " << parsed.error().message() << "\n";
-            return 1;
-        }
-
-        urls::url url(*parsed);
+        urls::url url = redirect::Rewrite(opts.input)();
         print_url(url);
 
         if (has_rewrites(opts))
         {
-            apply_rewrites(url, opts);
-            std::cout << "\nrewritten:\n" << to_string_view(url.buffer()) << "\n";
+            urls::url rewritten_url = rewrite_url(opts);
+            std::cout << "\nrewritten:\n" << to_string_view(rewritten_url.buffer()) << "\n";
         }
 
         return 0;

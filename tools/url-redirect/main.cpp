@@ -46,7 +46,7 @@ std::string required_value(int &index, int argc, char *argv[], const std::string
     return argv[index];
 }
 
-MappingOption parse_mapping(std::string text)
+MappingOption parse_mapping(const std::string &text)
 {
     const auto separator = text.find('=');
     if (separator == std::string::npos)

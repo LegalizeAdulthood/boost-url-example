@@ -55,10 +55,9 @@ std::string join_paths(const std::string &base_path, const std::string &suffix)
 namespace redirect
 {
 
-MappingRule::MappingRule(const std::string &path_prefix, const std::string &target_base_url) :
-    m_path_prefix(path_prefix)
+UrlMapper &UrlMapper::add_rule(const std::string &path_prefix, const std::string &target_base_url)
 {
-    if (m_path_prefix.empty())
+    if (path_prefix.empty())
     {
         throw std::runtime_error("path prefix must not be empty");
     }
@@ -69,22 +68,7 @@ MappingRule::MappingRule(const std::string &path_prefix, const std::string &targ
         throw std::runtime_error("invalid target URL: " + parsed.error().message());
     }
 
-    m_target_base_url = boost::urls::url(*parsed);
-}
-
-const std::string &MappingRule::path_prefix() const
-{
-    return m_path_prefix;
-}
-
-const boost::urls::url &MappingRule::target_base_url() const
-{
-    return m_target_base_url;
-}
-
-UrlMapper &UrlMapper::add_rule(const std::string &path_prefix, const std::string &target_base_url)
-{
-    m_rules.emplace_back(path_prefix, target_base_url);
+    m_rules.push_back({path_prefix, boost::urls::url(*parsed)});
     return *this;
 }
 
@@ -102,8 +86,8 @@ boost::urls::url UrlMapper::operator()(const std::string &incoming_url) const
 
     for (const MappingRule &rule : m_rules)
     {
-        if (path_matches(incoming_path, rule.path_prefix()) &&
-            (match == nullptr || rule.path_prefix().size() > match->path_prefix().size()))
+        if (path_matches(incoming_path, rule.path_prefix) &&
+            (match == nullptr || rule.path_prefix.size() > match->path_prefix.size()))
         {
             match = &rule;
         }
@@ -114,8 +98,8 @@ boost::urls::url UrlMapper::operator()(const std::string &incoming_url) const
         throw std::runtime_error("no mapping rule matched incoming URL");
     }
 
-    const boost::urls::url &target_base_url = match->target_base_url();
-    std::string suffix = incoming_path.substr(match->path_prefix().size());
+    const boost::urls::url &target_base_url = match->target_base_url;
+    std::string suffix = incoming_path.substr(match->path_prefix.size());
     boost::urls::url mapped = target_base_url;
 
     mapped.set_path(join_paths(to_string_view(target_base_url.path()), suffix));

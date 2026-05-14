@@ -2,7 +2,7 @@
 
 # Boost.Url Example
 
-Sample code for the video Manipulating URLs with Boost.URL.
+Sample code for the video [Manipulating URLs with Boost.URL](https://www.youtube.com/watch?v=ZK2TRfYciJ4).
 
 # Obtaining the Source
 
